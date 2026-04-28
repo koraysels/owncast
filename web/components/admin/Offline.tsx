@@ -48,6 +48,7 @@ export const Offline: FC<OfflineProps> = ({ logs = [], config }) => {
   const { serverConfig } = serverStatusData || {};
   const { rtmpServerPort, streamKeyOverridden } = serverConfig;
   const instanceUrl = global.window?.location.hostname || '';
+  const embedVideoURL = global.window ? `${window.location.origin}/embed/video` : '';
 
   let rtmpURL;
   if (instanceUrl && rtmpServerPort) {
@@ -106,6 +107,16 @@ export const Offline: FC<OfflineProps> = ({ logs = [], config }) => {
           >
             {t('Learn how you can add your Owncast stream to other sites you control.')}
           </a>
+          <div className="stream-info-container">
+            <Text strong className="stream-info-label">
+              {t('Video embed URL:')}
+            </Text>
+            {embedVideoURL && (
+              <Paragraph className="stream-info-box" copyable>
+                {embedVideoURL}
+              </Paragraph>
+            )}
+          </div>
         </div>
       ),
     },
