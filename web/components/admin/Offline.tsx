@@ -48,7 +48,7 @@ export const Offline: FC<OfflineProps> = ({ logs = [], config }) => {
   const { serverConfig } = serverStatusData || {};
   const { rtmpServerPort, streamKeyOverridden } = serverConfig;
   const instanceUrl = global.window?.location.hostname || '';
-  const embedVideoURL = global.window ? `${window.location.origin}/embed/video` : '';
+  const embedVideoURL = global.window ? `${global.window.location.origin}/embed/video` : '';
 
   let rtmpURL;
   if (instanceUrl && rtmpServerPort) {
