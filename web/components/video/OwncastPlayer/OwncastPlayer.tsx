@@ -27,6 +27,7 @@ export type OwncastPlayerProps = {
   source: string;
   online: boolean;
   initiallyMuted?: boolean;
+  autoplay?: boolean;
   title: string;
   className?: string;
 };
@@ -35,6 +36,7 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
   source,
   online,
   initiallyMuted = false,
+  autoplay = false,
   title,
   className,
 }) => {
@@ -196,7 +198,7 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
   });
 
   const videoJsOptions = {
-    autoplay: false,
+    autoplay,
     controls: true,
     responsive: true,
     fluid: false,
