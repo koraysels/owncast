@@ -48,3 +48,8 @@ web/style-definitions/build/
 web/public/sw.js
 web/public/workbox-*.js
 bin/
+/.serena/
+/.omc/
+/web/.omc/
+/.omc/
+/.claude/
