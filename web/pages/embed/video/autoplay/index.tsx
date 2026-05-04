@@ -61,6 +61,7 @@ export default function VideoEmbedAutoplay() {
         online={online}
         initiallyMuted
         autoplay
+        showUnmuteOverlay
         title={streamTitle || name}
       />
       <Statusbar

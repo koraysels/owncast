@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useHotkeys } from 'react-hotkeys-hook';
 import classNames from 'classnames';
@@ -11,6 +11,7 @@ import { isVideoPlayingAtom, clockSkewAtom } from '../../stores/ClientConfigStor
 import PlaybackMetrics from '../metrics/playback';
 import { createVideoSettingsMenuButton } from '../settings-menu';
 import LatencyCompensator from '../latencyCompensator';
+import { AudioMutedOutlined } from '@ant-design/icons';
 import styles from './OwncastPlayer.module.scss';
 import { VideoSettingsServiceContext } from '../../../services/video-settings-service';
 import { ComponentError } from '../../ui/ComponentError/ComponentError';
@@ -30,6 +31,7 @@ export type OwncastPlayerProps = {
   autoplay?: boolean;
   title: string;
   className?: string;
+  showUnmuteOverlay?: boolean;
 };
 
 export const OwncastPlayer: FC<OwncastPlayerProps> = ({
@@ -39,22 +41,33 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
   autoplay = false,
   title,
   className,
+  showUnmuteOverlay = false,
 }) => {
   const VideoSettingsService = useContext(VideoSettingsServiceContext);
   const playerRef = React.useRef(null);
   const [videoPlaying, setVideoPlaying] = useRecoilState<boolean>(isVideoPlayingAtom);
   const clockSkew = useRecoilValue<Number>(clockSkewAtom);
+  const [isMuted, setIsMuted] = useState(initiallyMuted);
+
+  const getSavedVolume = () => {
+    const saved = parseFloat(getLocalStorage(PLAYER_VOLUME));
+    return saved > 0 ? saved : 1;
+  };
 
   const setSavedVolume = () => {
     try {
-      playerRef.current.volume(getLocalStorage(PLAYER_VOLUME) || 1);
+      playerRef.current.volume(getSavedVolume());
     } catch (err) {
       console.warn(err);
     }
   };
 
   const handleVolume = () => {
-    setLocalStorage(PLAYER_VOLUME, playerRef.current.muted() ? 0 : playerRef.current.volume());
+    const muted = playerRef.current.muted() || playerRef.current.volume() === 0;
+    if (!muted) {
+      setLocalStorage(PLAYER_VOLUME, playerRef.current.volume());
+    }
+    setIsMuted(muted);
   };
 
   const togglePlayback = () => {
@@ -67,8 +80,10 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
 
   const toggleMute = () => {
     if (playerRef.current.muted() || playerRef.current.volume() === 0) {
-      playerRef.current.volume(0.7);
+      playerRef.current.muted(false);
+      playerRef.current.volume(getSavedVolume());
     } else {
+      playerRef.current.muted(true);
       playerRef.current.volume(0);
     }
   };
@@ -312,6 +327,20 @@ export const OwncastPlayer: FC<OwncastPlayerProps> = ({
             <VideoPoster online={online} initialSrc="/thumbnail.jpg" src="/thumbnail.jpg" />
           )}
         </div>
+        {showUnmuteOverlay && isMuted && online && (
+          <button
+            type="button"
+            className={`${styles.unmuteButton} owncast-unmute-button`}
+            onClick={e => {
+              e.stopPropagation();
+              toggleMute();
+              setIsMuted(false);
+            }}
+            aria-label="Unmute"
+          >
+            <AudioMutedOutlined />
+          </button>
+        )}
       </div>
     </ErrorBoundary>
   );

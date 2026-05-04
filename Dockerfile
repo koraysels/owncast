@@ -7,10 +7,16 @@
 
 FROM golang:alpine AS build
 
-RUN apk update && apk add --no-cache git gcc build-base linux-headers
+RUN apk update && apk add --no-cache git gcc build-base linux-headers nodejs npm
 
 WORKDIR /build
 COPY . /build
+
+WORKDIR /build/web
+RUN npm ci --no-audit --silent && npm run build
+
+WORKDIR /build
+RUN rm -rf /build/static/web && mv /build/web/out /build/static/web
 
 ARG VERSION=dev
 ENV VERSION=${VERSION}

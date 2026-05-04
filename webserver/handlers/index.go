@@ -35,6 +35,13 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// In dev proxy mode, pass all frontend requests straight through with no
+	// CSP or caching headers so Next.js HMR works correctly.
+	if devFrontendProxy != nil {
+		devFrontendProxy.ServeHTTP(w, r)
+		return
+	}
+
 	// For search engine bots and social scrapers return a special
 	// server-rendered page.
 	if utils.IsUserAgentABot(r.UserAgent()) && isIndexRequest {

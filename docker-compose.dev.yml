@@ -1,0 +1,36 @@
+services:
+  go:
+    build:
+      context: .
+      dockerfile: Dockerfile.go.dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - go-build-cache:/root/.cache/go-build
+    ports:
+      - "8080:8080"
+      - "1935:1935"
+    environment:
+      - CGO_ENABLED=1
+      - GOOS=linux
+      - OWNCAST_DEV_FRONTEND=http://web:3000
+    command: air
+
+  web:
+    image: node:22-alpine
+    working_dir: /repo/web
+    volumes:
+      - .:/repo
+      - web-node-modules:/repo/web/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - OWNCAST_BACKEND_URL=http://go:8080
+    depends_on:
+      - go
+    command: >
+      sh -c "npm ci --no-audit --silent && npm run dev -- --hostname 0.0.0.0"
+
+volumes:
+  go-build-cache:
+  web-node-modules:
