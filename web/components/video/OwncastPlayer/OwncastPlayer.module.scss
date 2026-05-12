@@ -29,4 +29,41 @@
     grid-column: 1;
     grid-row: 1;
   }
+
+  .unmuteButton {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    justify-self: center;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--theme-color-action);
+    font-size: clamp(1rem, 30vmin, 8rem);
+    padding: 0;
+    line-height: 1;
+    transition: font-size 0.2s ease-in-out;
+    pointer-events: auto;
+
+    &:hover {
+      font-size: clamp(1rem, 32vmin, 10rem);
+    }
+
+    svg {
+      display: block;
+      width: 1em;
+      height: 1em;
+
+			path {
+				stroke: white;
+				stroke-linecap: round;
+				stroke-linejoin: round;
+				stroke-width: 10px;
+			}
+    }
+  }
 }

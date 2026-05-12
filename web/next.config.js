@@ -16,35 +16,37 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 });
 
+const BACKEND_URL = process.env.OWNCAST_BACKEND_URL || 'http://localhost:8080';
+
 async function rewrites() {
   return [
     {
       source: '/api/:path*',
-      destination: 'http://localhost:8080/api/:path*', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/api/:path*`,
     },
     {
       source: '/hls/:path*',
-      destination: 'http://localhost:8080/hls/:path*', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/hls/:path*`,
     },
     {
       source: '/img/:path*',
-      destination: 'http://localhost:8080/img/:path*', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/img/:path*`,
     },
     {
       source: '/logo',
-      destination: 'http://localhost:8080/logo', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/logo`,
     },
     {
       source: '/thumbnail.jpg',
-      destination: 'http://localhost:8080/thumbnail.jpg', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/thumbnail.jpg`,
     },
     {
       source: '/customjavascript',
-      destination: 'http://localhost:8080/customjavascript', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/customjavascript`,
     },
     {
       source: '/favicon.ico',
-      destination: 'http://localhost:8080/favicon.ico', // Proxy to Backend to work around CORS.
+      destination: `${BACKEND_URL}/favicon.ico`,
     },
   ];
 }
